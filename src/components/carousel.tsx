@@ -93,3 +93,5 @@ export function Carousel({ videos }: CarouselProps) {
 
       <ButtonFullScreen />
     </main>
+  );
+}
