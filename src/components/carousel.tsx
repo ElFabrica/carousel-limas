@@ -68,6 +68,7 @@ export function Carousel({ videos }: CarouselProps) {
             ref={videoRef}
             key={currentIndex}
             src={videos[currentIndex]}
+            controls={false}
             autoPlay
             playsInline
             onEnded={handleEnded}
