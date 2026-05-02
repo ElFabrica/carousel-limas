@@ -1,65 +1,118 @@
-import Image from "next/image";
+"use client";
+import { ButtonFullScreen } from "@/components/button";
+import { useState, useEffect, useRef } from "react";
+
+// Definição do tipo para os objetos de vídeo
+interface VideoItem {
+  url: string;
+}
+
+const videos: VideoItem[] = [
+  {
+    url: "video.mp4",
+  },
+  {
+    url: "video02.mp4",
+  },
+  {
+    url: "IMG_0728.MOV",
+  },
+  {
+    url: "video03.mp4",
+  },
+  {
+    url: "video05.mp4",
+  },
+  {
+    url: "video06.mp4",
+  },
+  {
+    url: "video07.mp4",
+  },
+  {
+    url: "video08.mp4",
+  },
+  {
+    url: "video09.mp4",
+  },
+  {
+    url: "video10.mp4",
+  },
+  {
+    url: "video11.mp4",
+  },
+  {
+    url: "video12.mp4",
+  },
+  {
+    url: "video13.mp4",
+  },
+  {
+    url: "video14.mp4",
+  },
+];
+
+// Componente ButtonFullScreen simulado
 
 export default function Home() {
+  const [isPause, setIsPaused] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Função para ir para o próximo vídeo
+  function handleVideoEnd() {
+    setCurrentVideoIndex((prevIndex) => {
+      // Volta para o primeiro vídeo quando chegar ao final
+      return (prevIndex + 1) % videos.length;
+    });
+  }
+
+  // Atualiza o src do vídeo quando o índice muda
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.load(); // Recarrega o vídeo com o novo src
+      video.play(); // Reproduz automaticamente
+    }
+  }, [currentVideoIndex]);
+
+  function handlePause() {
+    const video = videoRef.current;
+    if (video) {
+      if (video.paused) {
+        video.play();
+        setIsPaused(false);
+      } else {
+        video.pause();
+        setIsPaused(true);
+      }
+    }
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="relative flex min-h-screen items-center justify-center bg-black">
+      <video
+        ref={videoRef}
+        src={videos[currentVideoIndex].url}
+        autoPlay
+        controls={true}
+        playsInline
+        preload="auto"
+        onEnded={handleVideoEnd}
+        className="w-full h-screen object-cover cursor-pointer"
+      />
+
+      {isPause && (
+        <svg
+          className="absolute w-32 h-32 z-20 inset-0 m-auto text-white pointer-events-none"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      )}
+
+      <ButtonFullScreen />
+    </main>
   );
 }
